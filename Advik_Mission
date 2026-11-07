@@ -1,0 +1,96 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor, ColorSensor
+from pybricks.parameters import Port, Direction
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait
+
+def advik():
+    # Initialize the hub
+    hub = PrimeHub()
+
+    # Initialize the motors connected to the drive base
+    left_motor = Motor(Port.B, Direction.COUNTERCLOCKWISE)  # Adjust direction if necessary
+    right_motor = Motor(Port.A)
+    sensor = ColorSensor(Port.C)
+
+    # Measure your wheel diameter and axle track for accuracy
+    # Axle track is the distance between the center points of your wheels
+    wheel_diameter = 56  # millimeters
+    axle_track = 114  # millimeters
+    drive_base = DriveBase(left_motor, right_motor, wheel_diameter, axle_track)
+
+    # Enable gyro for driving straight and turning
+    drive_base.use_gyro(True)
+
+    drive_base.settings(
+        straight_speed=125,  # Set default straight speed to 200 mm/s
+        straight_acceleration=50,  # Set default straight
+        turn_rate = 150,  # Set default turn rate
+        turn_acceleration=75  # Set default turn acceleration
+    )
+    # Reset the gyro heading to 0 degrees before starting
+    hub.imu.reset_heading(0)
+
+    motor_e = Motor(Port.E, Direction.CLOCKWISE)
+    motor_f = Motor(Port.F, Direction.COUNTERCLOCKWISE)
+
+
+    drive_base.straight(370)
+
+    drive_base.settings(
+        straight_speed=700,  # Set default straight speed to 200 mm/s
+        straight_acceleration=600,  # Set default straight
+        turn_rate = 200,  # Set default turn rate
+        turn_acceleration=175  # Set default turn acceleration
+    )
+
+    drive_base.straight(-150)
+
+    drive_base.turn(50)
+
+    drive_base.straight(312)
+
+    drive_base.turn(-75.5)
+
+    motor_e.run(-500)
+    wait(1000)
+    motor_e.stop()
+
+    drive_base.straight(280)
+
+    motor_e.run(500)
+    wait(1000)
+    motor_e.stop()
+
+    drive_base.straight(-160)
+
+    drive_base.turn(44)
+
+    drive_base.straight(183)
+
+    drive_base.turn(60)
+
+    drive_base.straight(-52)
+
+    motor_f.run(-600)
+    wait(986)
+    motor_f.stop()
+
+    drive_base.straight(58)
+
+    motor_f.run(600)
+    wait(986)
+    motor_f.stop()
+
+
+
+    drive_base.settings(
+        straight_speed=900,  # Set default straight speed to 200 mm/s
+        straight_acceleration=700,  # Set default straight
+        turn_rate = 500,  # Set default turn rate
+        turn_acceleration=300  # Set default turn acceleration
+    )
+
+    drive_base.turn(-60)
+
+    drive_base.straight(-620)
