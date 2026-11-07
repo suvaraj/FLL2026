@@ -1,3 +1,4 @@
+# The robot is facing straight instead of at an angle
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorSensor
 from pybricks.parameters import Port, Direction
