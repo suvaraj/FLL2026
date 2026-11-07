@@ -1,0 +1,39 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
+from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait, StopWatch
+
+hub = PrimeHub()
+
+
+rightMotor = Motor(Port.E, Direction.CLOCKWISE)
+leftMotor = Motor(Port.F, Direction.COUNTERCLOCKWISE)
+
+
+leftwheel = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+rightwheel = Motor(Port.A, Direction.CLOCKWISE)
+
+
+robot = DriveBase(leftwheel, rightwheel, 56, 114)
+robot.use_gyro(True)
+
+color_sensor = ColorSensor(Port.C)
+
+robot.settings(straight_speed=150, turn_rate=100)
+robot.straight(584.2)
+robot.turn(-21)
+robot.straight(23)
+robot.turn(-50)
+robot.straight(20)
+robot.turn(77)
+robot.straight(-110)
+robot.turn(-92)
+robot.straight(90)
+robot.turn(-90)
+robot.straight(200)
+leftMotor.run_angle(400, 150)
+robot.turn(90)
+robot.straight(30)
+leftMotor.run_angle(400, -35)
+robot.turn(400, 35)
