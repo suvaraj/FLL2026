@@ -43,3 +43,4 @@ robot.settings(straight_speed=900, turn_rate=600)
 robot.straight(-200)
 robot.turn(30)
 #robot.straight(-710)
+
