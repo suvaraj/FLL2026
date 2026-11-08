@@ -1,0 +1,57 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
+from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait, StopWatch
+
+#Defintions
+hub = PrimeHub()
+right_motor=Motor(Port.A,Direction.CLOCKWISE)
+left_motor=Motor(Port.B,Direction.COUNTERCLOCKWISE)
+wheel_diameter=56
+axle_track=114
+sensor=ColorSensor(Port.C)
+robot=DriveBase(left_motor,right_motor,wheel_diameter,axle_track)
+robot.use_gyro(True)
+#gyro
+robot.settings(straight_speed=200)
+Motor_E=Motor(Port.E,Direction.CLOCKWISE)
+Motor_F=Motor(Port.F,Direction.CLOCKWISE)
+
+
+#Start the actual run
+robot.settings(400,400)
+robot.straight(270)
+robot.turn(-90)
+robot.straight(270)
+robot.turn(10)
+Motor_E.run(-300)
+wait(550)
+Motor_E.stop()
+robot.turn(-10)
+robot.straight(280)
+robot.turn(90)
+#Robot reached the first mission, Keystone Species
+robot.straight(40)
+Motor_F.run(200)
+wait(630)
+Motor_F.stop()
+#The robot has dropped the ladybug in the mission
+#The robot will now back away from the mission and go the Leaf Cutter
+Motor_F.run(-140)
+wait(630)
+Motor_F.stop()
+robot.straight(-30)
+robot.turn(30)
+robot.straight(430)
+robot.turn(10)
+#The robot has reached the Leaf Cutter it will now change its speed to go slower
+robot.settings(70,100)
+robot.straight(160)
+#The robot has completed the Leaf Cutter
+robot.settings(500,300)
+robot.straight(-48)
+robot.turn(97)
+#The robot will now knock down the handle for Window to the Past\\
+robot.straight(750)
+#The robot has arrived at the home
