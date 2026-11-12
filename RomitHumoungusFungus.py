@@ -20,41 +20,59 @@ robot = DriveBase(leftWheel, rightWheel, 56, 114)
 #Turn on gyro
 robot.use_gyro(True)
 
-#Move the arm down
-leftMotor.run_angle(900,-100)
-
 #Start at a fast speed
 robot.settings(900)
 
-#Move the robot forward
-robot.straight(260)
+#Move straight
+robot.straight(620)
 
-#Move the arm up
-rightMotor.run_angle(500,140)
+#Move the arm
+leftMotor.run_angle(900, -240)
 
-#Move the other arm up
-leftMotor.run_angle(200,140)
+#Move back
+robot.straight(-50)
+
+#Turn to the other mission
+robot.turn(41)
+
+#Move straight
+robot.straight(170)
+
+#Turn the left arm
+leftMotor.run_angle(900,300)
+
+#Wait
+wait(1000)
 
 #Move the arm down
-leftMotor.run_angle(900,-140)
-
-#Change the speed to slower
-robot.settings(70)
+leftMotor.run_angle(900,-200)
 
 #Move the robot back
-robot.straight(-110)
+robot.straight(-150)
 
-#Move the arm down
-rightMotor.run_angle(100,-120)
+#Move the arm back in
+leftMotor.run_angle(900,100)
 
-#Change the speed to faster
-robot.settings(900)
+#Turn the bot
+robot.turn(25)
+
+#Move straight
+robot.straight(150)
 
 #Move the robot back
-robot.straight(-140)
+robot.straight(-150)
 
-#Turn left to fit in the home
+#Turn the bot
+robot.turn(100)
+
+#Go forward
+robot.straight(80)
+
+#Turn the right arm
+rightMotor.run_angle(900,-90)
+
+#Turn the bot
 robot.turn(-90)
 
-#Move the robot back
-robot.straight(-90)
+#Move back
+robot.straight(-200)
