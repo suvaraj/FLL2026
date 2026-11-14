@@ -1,0 +1,40 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
+from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait, StopWatch
+from big_tree_Triangle import Jungle_Tree_Lift
+from Advik_Mission import advik
+
+hub = PrimeHub()
+sensor=ColorSensor(Port.C)
+
+
+detected_color = sensor.color()
+ref = sensor.reflection()
+print('dedecuted color',detected_color)
+
+#for example Runs document == AdvikSalvageMission.py
+#for example Name == Advik
+
+if detected_color == Color.YELLOW:#Romit R1
+    #Runs document
+    print("Y")
+if detected_color == Color.GREEN:#Baghat
+    #Runs document
+    print("G")
+if detected_color == Color.RED:#Advik
+    #Runs document
+    advik()
+    print("R")
+
+if detected_color == Color.BLUE:#Aegen
+    #Runs document
+    print("B")
+    Jungle_Tree_Lift()
+if detected_color == Color.WHITE:#Romit R2
+    #Runs document
+    print("W")
+if detected_color == Color.NONE:#Name
+    #Runs document
+    print("N0ne")
