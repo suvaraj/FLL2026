@@ -1,0 +1,47 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
+from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait, StopWatch
+
+def Abhirvey_run():
+    hub = PrimeHub()
+
+
+    rightMotor = Motor(Port.E, Direction.CLOCKWISE)
+    leftMotor = Motor(Port.F, Direction.COUNTERCLOCKWISE)
+
+
+    leftwheel = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+    rightwheel = Motor(Port.A, Direction.CLOCKWISE)
+
+
+    robot = DriveBase(leftwheel, rightwheel, 56, 114)
+    robot.use_gyro(True)
+
+    color_sensor = ColorSensor(Port.C)
+
+    robot.settings(straight_speed=150, turn_rate=75)
+    robot.straight(584.2)
+    robot.turn(-21)
+    robot.straight(22.5)
+    robot.turn(-50)
+    robot.straight(20)
+    robot.turn(77)
+    #first mission done
+    robot.settings(straight_speed=300, turn_rate=300)
+    robot.straight(-110)
+    robot.turn(-92)
+    leftMotor.run_angle(400, 165)
+    robot.straight(90)
+    robot.turn(-34)
+    robot.straight(90)
+    leftMotor.run_angle(400, -40)
+    robot.turn(-10)
+    leftMotor.run_angle(400, -30)
+    robot.turn(-63)
+    robot.settings(straight_speed=900, turn_rate=600)
+    robot.straight(-200)
+    robot.turn(30)
+    #robot.straight(-710)
+

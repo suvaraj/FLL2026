@@ -1,267 +1,116 @@
-Paste code here:
-from pybricks.hubs import PrimeHub
-from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
-from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
-from pybricks.robotics import DriveBase
-from pybricks.tools import wait, StopWatch
+# FLL 2026 Robot Code
 
-from pybricks.hubs import PrimeHub  # Or your specific hub (e.g., EV3Hub, CityHub, etc.)
+Programs for a LEGO SPIKE Prime robot used for the FIRST LEGO League 2026 missions. The code is written in Python for [Pybricks](https://pybricks.com/), with a color-sensor launcher that selects a mission based on the attachment color.
 
-def Jungle_Tree_Lift():   
+## What this project does
 
-    # The drivebase can accept speeds down to zero, but is not very efficient and
-    # quite erratic. Realistically, 30 is a good minimum speed
-    DB_MIN_SPEED_MMSEC = 30
-    
-    # Lowest usable accelleration, determined by testing
-    DB_MIN_ACCEL_MMSEC2: int = 5
-    
-    # Max and min turning speeds, determined by testing
-    # These are not affected by the tire size
-    DB_MIN_TURN_RATE_DEGSEC: int = 20
-    DB_MIN_TURN_ACCEL_DEGSEC2: int = 10
-    
-    # Straight Acceleration constants
-    # Anything above 800 mm/sec^2 causes wheel slippage, regardless of the
-    # tire size. The mass of the 56 and 88mm robots is about the same, so the
-    # force to maintain that acceleration is the same
-    # For 56mm, the maximum that can be set in the settings() command is 9775.
-    # For 88mm, the maximum that can be set in the settings() command is 15360.
-    DB_MAX_ACCEL_MMSEC2: int = 800
-    
-    # For turn rates, the best speed and acceleration was determined by testing
-    # It did not matter if it was on 56mm or 88mm tires, the values were the
-    # same for both. 180 deg/sec for speed and 360 deg/sec^2 for acceleration
-    # For 56mm, the maximum speed that can be set in the settings() command is 543
-    # For 88mm, the maximum speed that can be set in the settings() command is 854.
-    # For 88mm, the maximum accel that can be set in the settings() command is 17094.
-    DB_MAX_TURN_RATE_DEGSEC: int = 180
-    DB_MAX_TURN_ACCEL_DEGSEC2: int = 360
-    
-    
+The main launcher reads the color of the attachment under the color sensor and runs the corresponding mission program:
 
-    hub = PrimeHub()
-    # motors
-    leftmotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
-    rightmotor = Motor(Port.A)
-    rightarm = Motor(Port.E)
-    leftarm = Motor(Port.F)
-    # robot mesurements
-    wheeldimeter = 56
-    axletrack = 114
+| Detected color | Mission program |
+| --- | --- |
+| Green | `Bhagat_Ladybug_Leafcutter_Windowtopast.py` |
+| Red | `Advik_Mission.py` |
+| Blue | `big_tree_Triangle.py` |
+| Black | `RomitHumoungusFungus.py` |
+| White | `RomitOldTreeSeed.py` |
+| Yellow | `Abhirvey_run.py` |
 
-    # Drivebase parameters. None of these should ever be changed by users
-    if wheeldimeter == 56:
-            DB_MAX_SPEED_MMSEC: int = 488
-    if wheeldimeter == 88:
-            DB_MAX_SPEED_MMSEC: int = 768
-        # robot meaning
+If no color is detected, the hub displays an icon and waits. The color-detection thresholds and test observations are documented in `color_sensor.txt`.
 
-    robot = DriveBase(leftmotor, rightmotor, wheeldimeter, axletrack)
-    robot.use_gyro(True)
+## Project goals
 
-    def printOrientation(label):
-        pitch, roll = hub.imu.tilt()
+- Use one consistent drive-base configuration across mission programs.
+- Select missions automatically using colored attachments.
+- Use gyro-assisted driving for consistent straight paths and turns.
+- Keep each mission in its own function for independent testing and tuning.
+- Record sensor observations and field adjustments for future runs.
 
-        print(
-            label,
-            "distance =", robot.distance(),
-            "drive angle =", robot.angle(),
-            "imu heading =", hub.imu.heading(),
-            "pitch =", pitch,
-            "roll =", roll
-        )
+## Hardware configuration
 
-    def printBattery():
+The mission programs use the following standard port layout. Check each program before running it because some experimental programs use different motor directions or ports.
 
-        # Get battery voltage in millivolts (mV)
-        voltage = hub.battery.voltage()
+| Port | Device | Typical use |
+| --- | --- | --- |
+| A | Motor | Right drive motor or attachment motor |
+| B | Motor | Left drive motor |
+| C | Color Sensor | Attachment/color identification |
+| E | Motor | Right-side attachment |
+| F | Motor | Left-side attachment |
 
-        # Approximate voltage range for a standard hub battery (e.g., 6500mV to 8400mV)
-        min_voltage = 6500
-        max_voltage = 8400
+Common robot dimensions in the programs are:
 
-        # Convert voltage to a percentage
-        battery_percent = (voltage - min_voltage) * 100 / (max_voltage - min_voltage)
-        battery_percent = max(0, min(100, battery_percent))  # Clamp between 0% and 100%
+- Wheel diameter: `56 mm`
+- Axle track: `114 mm`
+- Gyro-assisted driving: enabled with `robot.use_gyro(True)`
 
-        # Print the results
-        print(f"Voltage: {voltage} mV")
-        print(f"Battery level: {battery_percent:.1f}%")
-    printBattery()
+## Main program
 
-    # uwprogram
-        # go straight
-        # All default constant percentages will be defined here
-    DEFAULT_MED_MOT_SPEED_PCT = 100  # normal attachment moter speed, % value
-    DEFAULT_MED_MOT_ACCEL_PCT = 80
-    DEFAULT_BIG_MOT_SPEED_PCT = 80  # normal wheels moter speed, % value
-    DEFAULT_BIG_MOT_ACCEL_PCT = 80
-    DEFAULT_TURN_SPEED_PCT = 45  #
-    DEFAULT_TURN_ACCEL_PCT = 45  #
-    DEFAULT_STALL_PCT = 50
-    # DEFAULT_STALL_PCT = 50  # not currently used
-        
-    def Rescale(
-            val: int, in_min: int, in_max: int, out_min: int, out_max: int
-        ) -> int:
-            neg: int = int(val / abs(val))  # will either be 1 or -1
-            val = abs(val)
-            if in_max == in_min:
-                return 0
-            if val < in_min:
-                val = in_min
-            if val > in_max:
-                val = in_max
-            retVal: int = out_min + (val - in_min) * int(
-                (out_max - out_min) / (in_max - in_min)
-            )
-            if retVal > out_max:
-                retVal = out_max
-            if retVal < out_min:
-                retVal = out_min
-            return retVal * neg
-        
-        
-    def RescaleStraightSpeed(speedPct) -> int:
-            return Rescale(
-                speedPct,
-                1,
-                100,
-                DB_MIN_SPEED_MMSEC,
-                DB_MAX_SPEED_MMSEC,
-            )
-        
-        
-    def RescaleStraightAccel(accelPct) -> int:
-            return Rescale(
-                accelPct,
-                1,
-                100,
-                DB_MIN_ACCEL_MMSEC2,
-                DB_MAX_ACCEL_MMSEC2,
-            )
-        
-        
-    def RescaleTurnSpeed(turnSpeedPct) -> int:
-            # print(turnSpeedPct)
-            return Rescale(
-                turnSpeedPct,
-                1,
-                100,
-                DB_MIN_TURN_RATE_DEGSEC,
-                DB_MAX_TURN_RATE_DEGSEC,
-            )
-        
-        
-    def RescaleTurnAccel(turnAccelPct) -> int:
-            return Rescale(
-                turnAccelPct,
-                1,
-                100,
-                DB_MIN_TURN_ACCEL_DEGSEC2,
-                DB_MAX_TURN_ACCEL_DEGSEC2,
-            )
-        
-    print('RescaleStraightSpeed',RescaleStraightSpeed(DEFAULT_BIG_MOT_SPEED_PCT))
-    print(RescaleStraightAccel(DEFAULT_BIG_MOT_ACCEL_PCT))
-    print(RescaleTurnSpeed(DEFAULT_TURN_SPEED_PCT))
-    print( RescaleTurnAccel(DEFAULT_TURN_ACCEL_PCT))
-        
-        #robot.settings(346,637,64,142)
-    robot.settings(RescaleStraightSpeed(DEFAULT_BIG_MOT_SPEED_PCT),
-                    RescaleStraightAccel(DEFAULT_BIG_MOT_ACCEL_PCT),
-                    RescaleTurnSpeed(DEFAULT_TURN_SPEED_PCT),
-                    RescaleTurnAccel(DEFAULT_TURN_ACCEL_PCT),)
-        
-        
+Run `Main program for bioglow` on the hub to use automatic color-based mission selection. It imports the mission functions, reads the color sensor on Port C, and launches the matching routine.
 
+The launcher expects the robot and attachment to be positioned consistently before starting. Run each mission independently during testing before using the color-based launcher.
 
-hub = PrimeHub()
-# motors
-leftmotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
-rightmotor = Motor(Port.A)
-rightarm = Motor(Port.E)
-leftarm = Motor(Port.F)
-# robot mesurements
-wheeldimeter = 56
-axletrack = 114
+## Program flow
 
-robot = DriveBase(leftmotor, rightmotor, wheeldimeter, axletrack)
-robot.use_gyro(True)
+1. Initialize the SPIKE Prime hub and color sensor.
+2. Read the attachment color, reflection, and HSV values.
+3. Apply additional HSV checks for colors that the sensor may report as `Color.NONE` or `Color.WHITE`.
+4. Match the detected color to a mission function.
+5. Run the mission routine using the drive motors and attachment motors.
 
-def printOrientation(label):
-    pitch, roll = hub.imu.tilt()
+Each mission function creates its own `DriveBase`, enables the gyro, and performs measured movements such as `straight()`, `turn()`, `run()`, or `run_angle()`.
 
-    print(
-        label,
-        "distance =", robot.distance(),
-        "drive angle =", robot.angle(),
-        "imu heading =", hub.imu.heading(),
-        "pitch =", pitch,
-        "roll =", roll
-    )
+## Running the programs
 
-def printBattery():
+1. Install Pybricks firmware and the Pybricks Code editor for the SPIKE Prime hub.
+2. Open this project in Pybricks Code, or copy the required `.py` files to the hub.
+3. Confirm the motor and sensor ports match the physical robot.
+4. Place the robot at the mission start position.
+5. Reset the hub heading when needed and run the selected program.
+6. Test at low speed first, then tune distances, angles, motor directions, and timing for the current field setup.
 
-    # Get battery voltage in millivolts (mV)
-    voltage = hub.battery.voltage()
+These programs control real motors and can move the robot immediately. Keep hands, cables, and loose objects clear of the robot during testing.
 
-    # Approximate voltage range for a standard hub battery (e.g., 6500mV to 8400mV)
-    min_voltage = 6500
-    max_voltage = 8400
+## Recommended development workflow
 
-    # Convert voltage to a percentage
-    battery_percent = (voltage - min_voltage) * 100 / (max_voltage - min_voltage)
-    battery_percent = max(0, min(100, battery_percent))  # Clamp between 0% and 100%
+1. Test the drive base and confirm both wheels move in the expected direction.
+2. Confirm the color sensor returns stable readings for every attachment.
+3. Test one mission function at a time without the automatic launcher.
+4. Tune distance, angle, speed, acceleration, and attachment timing.
+5. Test the complete route repeatedly from the same starting position.
+6. Use the automatic launcher only after the selected mission routines work independently.
 
-    # Print the results
-    print(f"Voltage: {voltage} mV")
-    print(f"Battery level: {battery_percent:.1f}%")
-printBattery()
+When tuning a route, change small groups of related values and record the result. This makes it easier to identify whether an error comes from wheel calibration, gyro drift, field placement, or attachment timing.
 
-    
-# program starts here
-robot.use_gyro(True)
-#robot goes to the tree
-robot.straight(270)
+## File reference
 
+- `Main program for bioglow` — automatic color-based mission launcher.
+- `Bhagat_Ladybug_Leafcutter_Windowtopast.py` — Ladybug and Leaf Cutter mission routine.
+- `Advik_Mission.py` — Advik mission routine.
+- `Advik_Mission_Test.py` — test variant of the Advik routine.
+- `big_tree_Triangle.py` — Jungle Tree lift routine and drive-base helpers.
+- `RomitHumoungusFungus.py` — Humongous Fungus mission routine.
+- `RomitOldTreeSeed.py` — Old Tree Seed mission routine.
+- `Abhirvey_run.py` — Abhirvey mission routine.
+- `color_senor_code.py` — continuously prints color-sensor readings for calibration.
+- `color_sensor.txt` — recorded color and HSV observations.
+- `X-box & PS controller code.py` — experimental manual controller using an Xbox-compatible controller.
 
-#robot turns to the jungle tree
-robot.turn(50)
-robot.straight(460)
-robot.turn(-50)
+## Calibration and troubleshooting
 
-#lowering collector
-leftarm.run(450)
-wait(800)
-leftarm.stop()
+- If the robot drives backward, reverse the affected motor direction or swap the motor wiring.
+- If turns are inaccurate, verify the wheel diameter and axle track, then recalibrate the gyro and adjust the turn values.
+- If attachments are misidentified, run `color_senor_code.py` and compare readings with `color_sensor.txt`.
+- Black and some brown/no-attachment readings may be returned as `Color.NONE`; the launcher uses HSV values to distinguish some cases.
+- Lighting, battery level, tire grip, attachment position, and field conditions can change results. Re-test after changing the robot or field setup.
 
+## Known limitations
 
-#getting closer to tree to lift platform and collect seed
-robot.straight(205)
+- The launcher depends on the attachment being positioned consistently over the color sensor.
+- Some colors can be confused under different lighting conditions.
+- Mission routines use fixed distances, turns, and delays rather than closed-loop position feedback.
+- The controller program is experimental and separate from the automatic mission launcher.
+- Physical testing on the current robot and competition table is required; a syntax check alone cannot validate robot behavior.
 
+## Project status
 
-
-#Backing up to solve the vine
-robot.straight(-200)
-
-#lowering grabber 
-rightarm.run(-180)
-wait(900)
-rightarm.stop()
-#getting closer to drag the vine
-robot.straight(50)
-
-#lifting arm for solving vine
-rightarm.run(120)
-wait(900)
-rightarm.stop()
-
-#going home
-robot.straight(-10)
-robot.turn(25)
-
-robot.settings(900,637,64,142)
-robot.straight(-690)
-#run done
+This is an actively tuned competition project. Mission programs are independent routines and may require field-specific calibration before a tournament run. There are no software-only automated tests; validation is performed on the physical robot and field.
