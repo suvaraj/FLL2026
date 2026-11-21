@@ -18,6 +18,9 @@ robot.settings(straight_speed=620)
 Motor_E=Motor(Port.E,Direction.CLOCKWISE)
 Motor_F=Motor(Port.F,Direction.CLOCKWISE)
 
+
+#COLOR TO BE DETERMINED
+
 robot.settings(200,200)
 
 robot.straight(300)
